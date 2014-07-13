@@ -27,13 +27,15 @@ public bool:InitNativesForwards()
 public OnPluginStart()
 {
     umsgHintText = GetUserMessageId("HintText");
-    
+
     if (umsgHintText == INVALID_MESSAGE_ID)
     {
         SetFailState("This game doesn't support HintText!");
     }
-    
+
     HookUserMessage(umsgHintText, MsgHook_HintText, true);
+    
+    //LoadTranslations("w3s._common.phrases.txt");
 }
 
 public OnWar3EventSpawn(client)
@@ -49,28 +51,30 @@ public OnWar3Event(W3EVENT:event, client)
     }
 }
 
-public NW3Hint(Handle:plugin,numParams)
+
+W3Hint_Internal(client,W3HintPriority:priority,Float:fDuration,String:sOutput[128])
 {
     if(bEnabled)
     {
-        new String:sFormat[128];
+        // why sFormat??  it doesn't even use it!
+        //new String:sFormat[128];
 
-        new client = GetNativeCell(1);
-        new W3HintPriority:priority = W3HintPriority:GetNativeCell(2);
-        new Float:fDuration = GetNativeCell(3);
-        GetNativeString(4, sFormat, sizeof(sFormat));
+        //new client = GetNativeCell(1);
+        //new W3HintPriority:priority = W3HintPriority:GetNativeCell(2);
+        //new Float:fDuration = GetNativeCell(3);
+        //GetNativeString(4, sFormat, sizeof(sFormat));
 
-        if(!ValidPlayer(client)) 
-        {
-            return 0;
-        }
+        //if(!ValidPlayer(client)) 
+        //{
+          //  return 0;
+        //}
         if(fDuration > 20.0)
         {
             fDuration = 20.0;
         }
         
-        new String:sOutput[128];
-        FormatNativeString(0, 4, 5, sizeof(sOutput), dummy, sOutput);
+        //new String:sOutput[128];
+        //FormatNativeString(0, 4, 5, sizeof(sOutput), dummy, sOutput);
 
         //must have \n
         new len = strlen(sOutput);
@@ -105,6 +109,28 @@ public NW3Hint(Handle:plugin,numParams)
         bUpdateNextFrame[client] = true;
     }
     
+    return 1;
+}
+
+public NW3Hint(Handle:plugin,numParams)
+{
+    if(bEnabled)
+    {
+        new client = GetNativeCell(1);
+
+        if(!ValidPlayer(client)) 
+        {
+            return 0;
+        }
+
+        new W3HintPriority:priority = W3HintPriority:GetNativeCell(2);
+        new Float:fDuration = GetNativeCell(3);
+
+        new String:sOutput[128];
+        FormatNativeString(0, 4, 5, sizeof(sOutput), dummy, sOutput);
+
+        return W3Hint_Internal(client,priority,fDuration,sOutput);
+    }
     return 1;
 }
 
@@ -181,6 +207,10 @@ public OnGameFrame()
                         {
                             StopSound(client, SNDCHAN_STATIC, "music/war3source/csgo/ui/hint.mp3");
                         }
+                        else if(GAMEFOF)
+                        {
+                            StopSound(client, SNDCHAN_STATIC, "war3source/csgo/ui/hint.mp3");
+                        }
                         else
                         {
                             StopSound(client, SNDCHAN_STATIC, "UI/hint.wav");
@@ -195,7 +225,14 @@ public OnGameFrame()
 
                         if (!StrEqual(sLastOutput[client], sOutput))
                         {
-                            PrintHintText(client, " %s", sOutput); //NEED SPACE
+                            if(GAMEFOF)
+                            {
+                                War3_ChatMessage(client, "{lightgreen} %s", sOutput);
+                            }
+                            else
+                            {
+                                PrintHintText(client, " %s", sOutput); //NEED SPACE
+                            }
                         }
                     }
                     strcopy(sLastOutput[client], sizeof(sOutput), sOutput);
