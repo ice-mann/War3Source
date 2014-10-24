@@ -40,6 +40,7 @@ public OnPluginStart()
   RegConsoleCmd("ultimate",War3Source_OldWCSCommand);
 
   RegConsoleCmd("shopmenu",War3Source_CmdShopmenu);
+  RegConsoleCmd("!shopmenu",War3Source_CmdShopmenu);
 }
 
 public bool:InitNativesForwards()
@@ -305,6 +306,11 @@ public Action:War3Source_SayCommand(client,args)
       W3CreateEvent(DoShowShopMenu,client);
       return returnblocking;
     }
+    else if(CommandCheck(arg1,"!shopmenu")||CommandCheck(arg1,"sh1"))
+    {
+      W3CreateEvent(DoShowShopMenu,client);
+      return returnblocking;
+    }
     else if(CommandCheck(arg1,"shopmenu2")||CommandCheck(arg1,"sh2"))
     {
       W3CreateEvent(DoShowShopMenu2,client);
@@ -315,7 +321,17 @@ public Action:War3Source_SayCommand(client,args)
       W3CreateEvent(DoShowWar3Menu,client);
       return returnblocking;
     }
+    else if(CommandCheck(arg1,"!war3menu")||CommandCheck(arg1,"w3s")||CommandCheck(arg1,"wcs"))
+    {
+      W3CreateEvent(DoShowWar3Menu,client);
+      return returnblocking;
+    }
     else if(CommandCheck(arg1,"levelbank"))
+    {
+      W3CreateEvent(DoShowLevelBank,client);
+      return returnblocking;
+    }
+    else if(CommandCheck(arg1,"!levelbank"))
     {
       W3CreateEvent(DoShowLevelBank,client);
       return returnblocking;
@@ -407,12 +423,15 @@ public Action:War3Source_SayCommand(client,args)
         CommandCheck(arg1,"spendskills") ||
         CommandCheck(arg1,"showskills") ||
         CommandCheck(arg1,"shopmenu") ||
+        CommandCheck(arg1,"!shopmenu") ||
         CommandCheck(arg1,"sh1") ||
         CommandCheck(arg1,"war3menu") ||
+        CommandCheck(arg1,"!war3menu") ||
         CommandCheck(arg1,"w3s") ||
         CommandCheck(arg1,"war3rank") ||
         CommandCheck(arg1,"war3stats") ||
         CommandCheck(arg1,"levelbank")||
+        CommandCheck(arg1,"!levelbank")||		
         CommandCheckEx(arg1,"war3top")>0)
     {
       if(W3IsPlayerXPLoaded(client))
