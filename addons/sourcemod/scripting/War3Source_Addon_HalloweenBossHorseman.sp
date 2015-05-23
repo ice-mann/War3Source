@@ -29,8 +29,8 @@ public OnPluginStart()
 
 public Action:Event_HorsemannKilled(Handle:event, const String:name[], bool:dontBroadcast)
 {
-    new RandXP=GetRandomInt(100,200);
-    new RandGOLD=GetRandomInt(1,10);
+    new RandXP=GetRandomInt(1000,2000);
+    new RandGOLD=GetRandomInt(10,100);
     if(ValidPlayer(ClientKilledHorseman))
     {
         W3GiveXPGold(ClientKilledHorseman, XPAwardByGeneric, RandXP, RandGOLD, "killing the headless horseman");
